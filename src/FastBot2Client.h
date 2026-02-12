@@ -202,6 +202,12 @@ class FastBot2Client : public fb::Core {
         m.makePacket(p);
         return sendPacket(p, wait);
     }
+    fb::Result editKeyboard(const fb::KeyboardEdit& m, bool wait = true) {
+        if (!m.chatID) return fb::Result();
+        fb::Packet p(tg_cmd::editMessageReplyMarkup, _token);
+        m.makePacket(p);
+        return sendPacket(p, wait);
+    }
 
     // редактировать геолокацию
     fb::Result editLocation(const fb::LocationEdit& m, bool wait = true) {

@@ -8,6 +8,7 @@
 #include "FastBot2Client_class.h"
 #include "ID.h"
 #include "InlineMenu.h"
+#include "Keyboard.h"
 #include "Menu.h"
 #include "Message_class.h"
 
@@ -64,18 +65,13 @@ class Message {
     // режим текста: Text, MarkdownV2, HTML
     Mode mode = modeDefault;
 
-    // добавить обычное меню
-    void setMenu(Menu& menu) {
-        if (menu.text.length()) _menu = &menu;
+    // добавить клавиатуру Keyboard/InlineKeyboard
+    void setKeyboard(KeyboardBase* keyboard) {
+        _keyboard = keyboard;
     }
 
-    // добавить инлайн меню
-    void setInlineMenu(InlineMenu& menu) {
-        if (menu.text.length() && menu.data.length()) _menu_inline = &menu;
-    }
-
-    // удалить обычное меню
-    void removeMenu() {
+    // удалить Keyboard клавиатуру
+    void removeKeyboard() {
         _remove_menu = 1;
     }
 
@@ -103,10 +99,28 @@ class Message {
     // режим текста: Text, MarkdownV2, HTML (умолч. Text)
     static Mode modeDefault;
 
+    // deprecated
+
+    // добавить обычное меню
+    void setMenu(Menu& menu) {
+        if (menu.text.length()) _menu = &menu;
+    }
+
+    // добавить инлайн меню
+    void setInlineMenu(InlineMenu& menu) {
+        if (menu.text.length() && menu.data.length()) _menu_inline = &menu;
+    }
+
+    // удалить обычное меню
+    void removeMenu() {
+        _remove_menu = 1;
+    }
+
    private:
     bool _remove_menu = 0;
     Menu* _menu = nullptr;
     InlineMenu* _menu_inline = nullptr;
+    KeyboardBase* _keyboard = nullptr;
 
    protected:
     void makePacket(Packet& p) const {
@@ -128,7 +142,7 @@ class Message {
         if (protect) p[tg_api::protect_content] = true;
         if (mode != Message::Mode::Text) p[tg_api::parse_mode] = (mode == Message::Mode::MarkdownV2 ? F("MarkdownV2") : F("HTML"));
 
-        if (_remove_menu || _menu_inline || _menu) {
+        if (_remove_menu ||_keyboard|| _menu_inline || _menu) {
             p[tg_api::reply_markup]('{');
             makeMenu(p);
             p('}');
@@ -158,7 +172,7 @@ class Message {
         if (protect) p.addQS(tg_api::protect_content, true);
         if (mode != Message::Mode::Text) p.addQS(tg_api::parse_mode, mode == (Message::Mode::MarkdownV2) ? F("MarkdownV2") : F("HTML"));
 
-        if (_remove_menu || _menu_inline || _menu) {
+        if (_remove_menu ||_keyboard || _menu_inline || _menu) {
             p.beginQS(tg_api::reply_markup);
             p('{');
             makeMenu(p);
@@ -168,6 +182,7 @@ class Message {
 
     void makeMenu(Packet& p) const {
         if (_remove_menu) p[tg_api::remove_keyboard] = true;
+        else if (_keyboard) _keyboard->_toJson(p);
         else if (_menu_inline) _menu_inline->_toJson(p);
         else if (_menu) _menu->_toJson(p);
     }

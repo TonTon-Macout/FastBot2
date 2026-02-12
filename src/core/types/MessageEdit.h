@@ -26,6 +26,7 @@ class TextEdit : private Message {
     using Message::mode;
     using Message::preview;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
     using Message::text;
 
    protected:
@@ -55,6 +56,34 @@ class MenuEdit : private Message {
     using Message::chatID;
     using Message::json;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
+
+   protected:
+    void makePacket(Packet& p) const {
+        Message::makePacket(p);
+        p[tg_api::message_id] = messageID;
+    }
+};
+
+class KeyboardEdit : private Message {
+    friend class ::FastBot2Client;
+
+   public:
+    KeyboardEdit() {}
+    KeyboardEdit(uint32_t messageID, ID chatID) : messageID(messageID) {
+        this->chatID = chatID;
+    }
+    KeyboardEdit(uint32_t messageID, ID chatID, InlineKeyboard* menu) : messageID(messageID) {
+        this->chatID = chatID;
+        setKeyboard(menu);
+    }
+
+    // id сообщения
+    uint32_t messageID;
+
+    using Message::chatID;
+    using Message::json;
+    using Message::setKeyboard;
 
    protected:
     void makePacket(Packet& p) const {
@@ -83,6 +112,7 @@ class CaptionEdit : private Message {
     using Message::json;
     using Message::mode;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
 
    protected:
     void makePacket(Packet& p) const {
@@ -123,6 +153,7 @@ class LocationEdit : private Message {
     using Message::chatID;
     using Message::json;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
 
    protected:
     void makePacket(Packet& p) const {
@@ -152,6 +183,7 @@ class LocationStop : private Message {
     using Message::chatID;
     using Message::json;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
 
    protected:
     void makePacket(Packet& p) const {

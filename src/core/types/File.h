@@ -42,6 +42,7 @@ class File : protected Message {
     using Message::protect;
     using Message::reply;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
     using Message::threadID;
 
     // заголовок
@@ -97,6 +98,7 @@ class FileEdit : protected File {
     using File::multipart;
     using Message::json;
     using Message::setInlineMenu;
+    using Message::setKeyboard;
 
    protected:
     void makePacket(Packet& p) const {

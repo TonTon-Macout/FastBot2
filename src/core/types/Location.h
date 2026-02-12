@@ -27,6 +27,7 @@ class Location : private Message {
     using Message::reply;
     using Message::setInlineMenu;
     using Message::setMenu;
+    using Message::setKeyboard;
     using Message::threadID;
 
     // широта
