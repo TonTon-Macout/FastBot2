@@ -164,6 +164,7 @@ class Core : public Http {
     // запустить (по умолчанию уже запущен)
     void begin() {
         _state = true;
+        _detected_freezes = false;
     }
 
     // остановить
