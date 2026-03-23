@@ -69,6 +69,14 @@ class Core : public Http {
         return _clientTout;
     }
 
+    // Обнаружено зависание 
+    //- reset - сбросит флаг
+    bool isFreezes(bool reset = false) {
+        bool is_freezes = _detected_freezes;
+        if(reset) _detected_freezes = false;
+        return is_freezes;
+    }
+
     // ============================== SYSTEM ==============================
 
     // автоматически декодировать юникод в тексте (умолч. true)
@@ -363,13 +371,16 @@ class Core : public Http {
             FB_ESP_YIELD();
             if (wait) {
                 FB_LOG("send + wait");
+                _detected_freezes = false;
                 return _parseResponse(http.getResponse());
             } else {
                 FB_LOG("send async");
+                _detected_freezes = false;
             }
         } else {
             if (sent) *sent = false;
             FB_LOG("send error");
+            _detected_freezes = true;
         }
         _last_send = millis();  // на случай долгого beginSend
         return Result();
@@ -436,6 +447,7 @@ class Core : public Http {
     uint32_t _last_send = 0;
     size_t _limit = 20000;
     Fetcher::Reboot _reboot = Fetcher::Reboot::Idle;
+    bool _detected_freezes = false;
 
     CallbackRaw _cbRaw = nullptr;
     CallbackUpdate _cbUpdate = nullptr;
