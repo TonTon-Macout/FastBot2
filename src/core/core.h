@@ -65,9 +65,9 @@ class Core : public Http {
     }
     // установить таймаут рукопажатия (умолч. 120 000 мс)
     //@param timeout в секундах (далее будет умножено на 1000)
-    void setHandshakeTimeout(uint16_t timeout){
-        http.setHandshakeTimeout(timeout);
-    }
+    //void setHandshakeTimeout(uint16_t timeout){
+    //    http.setHandshakeTimeout(timeout);
+    //}
 
     // получить таймаут ожидания ответа сервера
     uint16_t getTimeout() {
