@@ -161,7 +161,7 @@ class Core : public Http {
         return _last_bot;
     }
 
-    // запустить (по умолчанию уже запущен)
+    // запустить (по умолчанию уже запущен)я
     void begin() {
         _state = true;
         _detected_freezes = false;
