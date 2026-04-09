@@ -70,6 +70,11 @@ class Core : public Http {
     }
 
     // Обнаружено зависание 
+    void setFreezes() {
+        _detected_freezes = true;
+    }
+
+    // Обнаружено зависание 
     bool isFreezes() {
         return _detected_freezes;
     }
@@ -170,7 +175,7 @@ class Core : public Http {
     // запустить (по умолчанию уже запущен)я
     void begin() {
         _state = true;
-        _detected_freezes = false;
+        resetFreezes();
     }
 
     // остановить
@@ -266,6 +271,7 @@ class Core : public Http {
             if (millis() - _last_send >= (_clientTout + (_poll_wait ? _poll_prd : 0ul))) {
                 _poll_wait = 0;
                 FB_LOG("poll timeout");
+                setFreezes();
                 http.stop();
             }
         } else if (_online) {
@@ -275,6 +281,7 @@ class Core : public Http {
                     Result res = getUpdates(true);
                     if (res.isArray()) {
                         _parseUpdates(res);
+                        resetFreezes();
                         return 1;
                     }
                 } else {
@@ -288,6 +295,7 @@ class Core : public Http {
             Result res = _parseResponse(http.getResponse());
             if (res && res.isArray()) {
                 _parseUpdates(res);
+                resetFreezes();
                 return 1;
             }
         }
@@ -299,6 +307,7 @@ class Core : public Http {
         Result res = getUpdates(true, false);
         if (res && res.isArray()) {
             _parseUpdates(res);
+            resetFreezes();
             return 1;
         }
         return 0;
@@ -378,16 +387,16 @@ class Core : public Http {
             FB_ESP_YIELD();
             if (wait) {
                 FB_LOG("send + wait");
-                _detected_freezes = false;
+                resetFreezes();
                 return _parseResponse(http.getResponse());
             } else {
                 FB_LOG("send async");
-                _detected_freezes = false;
+                resetFreezes();
             }
         } else {
             if (sent) *sent = false;
             FB_LOG("send error");
-            _detected_freezes = true;
+            setFreezes();
         }
         _last_send = millis();  // на случай долгого beginSend
         return Result();
