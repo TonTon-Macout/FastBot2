@@ -286,7 +286,7 @@ class Core : public Http {
                     Result res = getUpdates(true);
                     if (res.isArray()) {
                         _parseUpdates(res);
-                        resetFreezes();
+                       // resetFreezes();
                         return 1;
                     }
                 } else {
@@ -300,7 +300,7 @@ class Core : public Http {
             Result res = _parseResponse(http.getResponse());
             if (res && res.isArray()) {
                 _parseUpdates(res);
-                resetFreezes();
+               // resetFreezes();
                 return 1;
             }
         }
@@ -312,7 +312,7 @@ class Core : public Http {
         Result res = getUpdates(true, false);
         if (res && res.isArray()) {
             _parseUpdates(res);
-            resetFreezes();
+           // resetFreezes();
             return 1;
         }
         return 0;
