@@ -70,10 +70,16 @@ class Core : public Http {
     }
 
     // Обнаружено зависание 
-    //- reset - сбросит флаг
-    bool isFreezes(bool reset = false) {
+    bool isFreezes() {
+        return _detected_freezes;
+    }
+
+    // Сбросить флаг зависания
+    // Вернет true - если было зависание
+    bool resetFreezes() {
         bool is_freezes = _detected_freezes;
-        if(reset) _detected_freezes = false;
+        _detected_freezes = false;
+       
         return is_freezes;
     }
 
