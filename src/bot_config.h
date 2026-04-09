@@ -24,7 +24,7 @@
 #define FB_SUB_NEXT FB_SUB_END FB_SUB_BEGIN
 
 // #define FB_USE_LOG Serial
-
+// #define FB_USE_LOG DEBUG
 // log
 #ifdef FB_USE_LOG
 #define FB_LOG(x)                                   \
